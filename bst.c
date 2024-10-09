@@ -63,6 +63,7 @@ int ThreadTreeInOrder(ThreadNode* root) {
 }
 
 
+
 ThreadNode* GenerateThreadTree(int input[]) {
     TreeNode* root = GenerateBinaryTree(input); // GenerateBinaryTree 함수 사용
     ThreadNode* troot = NULL;
