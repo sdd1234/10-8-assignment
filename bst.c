@@ -38,6 +38,29 @@ TreeNode* GenerateBinaryTree(int input[]) {
     }
     return root;
 }
+int ThreadTreeInOrder(ThreadNode* root) {
+    ThreadNode* current = root;
+
+    while (current != NULL) {
+        // 가장 왼쪽 노드로 이동
+        while (current->left != NULL && !current->left->is_thread) {
+            current = current->left;
+        }
+
+        // 현재 노드 방문
+        printf("%d ", current->data);
+
+        // 스레드를 따라 이동
+        while (current->is_thread) {
+            current = current->right;
+            printf("%d ", current->data);
+        }
+
+        // 오른쪽 서브트리로 이동
+        current = current->right;
+    }
+    return 0;
+}
 
 ThreadNode* GenerateThreadTree(int input[]) {
     TreeNode* root = GenerateBinaryTree(input); // GenerateBinaryTree 함수 사용
@@ -93,26 +116,4 @@ ThreadNode* GenerateThreadTree(int input[]) {
 
 
 
-int ThreadTreeInOrder(ThreadNode* root) {
-    ThreadNode* current = root;
 
-    while (current != NULL) {
-        // 가장 왼쪽 노드로 이동
-        while (current->left != NULL && !current->left->is_thread) {
-            current = current->left;
-        }
-
-        // 현재 노드 방문
-        printf("%d ", current->data);
-
-        // 스레드를 따라 이동
-        while (current->is_thread) {
-            current = current->right;
-            printf("%d ", current->data);
-        }
-
-        // 오른쪽 서브트리로 이동
-        current = current->right;
-    }
-    return 0;
-}
