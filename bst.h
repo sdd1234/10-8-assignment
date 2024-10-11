@@ -17,5 +17,5 @@ void inorder_traversal(TreeNode* node);
 TreeNode* GenerateBinaryTree(int input[]);
 ThreadNode* GenerateThreadTree(int input[]);
 ThreadTreeInOrder(ThreadNode* tnode);
-
+ThreadNode* CopyTree(TreeNode* root);
 

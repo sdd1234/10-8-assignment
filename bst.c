@@ -64,46 +64,51 @@ int ThreadTreeInOrder(ThreadNode* root) {
 
 
 ThreadNode* GenerateThreadTree(int input[]) {
-    TreeNode* root = GenerateBinaryTree(input); // GenerateBinaryTree 함수 사용
+    TreeNode* root = GenerateBinaryTree(input); 
     ThreadNode* troot = NULL;
     ThreadNode* prev = NULL;
 
+    // 이진 트리를 스레드 트리로 복사
+    ThreadNode* current = CopyTree(root);
+
     // 중위 순회를 통해 스레드 트리 생성
-    TreeNode* stack[100]; // 스택을 사용하여 중위 순회
-    int top = -1;
-    TreeNode* current = root;
-
-    while (current != NULL || top != -1) {
-        // 가장 왼쪽 노드로 이동
-        while (current != NULL) {
-            stack[++top] = current;
-            current = current->left;
-        }
-
-        current = stack[top--];
-
-        // 새로운 스레드 노드 생성
-        ThreadNode* tnode = (ThreadNode*)malloc(sizeof(ThreadNode));
-        if (tnode == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
-            exit(1);
-        }
-        tnode->data = current->data;
-        tnode->left = tnode->right = NULL;
-        tnode->is_thread = 0;
-
-        if (prev != NULL) {
-            prev->right = tnode;
-            prev->is_thread = 1;
+    while (current != NULL) {
+        if (current->left == NULL) {
+            // 왼쪽 자식이 없는 경우
+            if (prev != NULL) {
+                prev->right = current;
+                prev->is_thread = 1;
+            }
+            else {
+                troot = current;
+            }
+            prev = current;
+            current = current->right;
         }
         else {
-            troot = tnode;
+            // 왼쪽 자식이 있는 경우
+            ThreadNode* pre = current->left;
+            while (pre->right != NULL && pre->right != current) {
+                pre = pre->right;
+            }
+
+            if (pre->right == NULL) {
+                pre->right = current;
+                current = current->left;
+            }
+            else {
+                pre->right = NULL;
+                if (prev != NULL) {
+                    prev->right = current;
+                    prev->is_thread = 1;
+                }
+                else {
+                    troot = current;
+                }
+                prev = current;
+                current = current->right;
+            }
         }
-
-        prev = tnode;
-
-        // 오른쪽 서브트리로 이동
-        current = current->right;
     }
 
     // 마지막 노드의 오른쪽 포인터를 NULL로 설정
@@ -113,6 +118,24 @@ ThreadNode* GenerateThreadTree(int input[]) {
     }
 
     return troot;
+}
+
+ThreadNode* CopyTree(TreeNode* root) {
+    if (root == NULL) {
+        return NULL;
+    }
+
+    ThreadNode* tnode = (ThreadNode*)malloc(sizeof(ThreadNode));
+    if (tnode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    tnode->data = root->data;
+    tnode->left = CopyTree(root->left);
+    tnode->right = CopyTree(root->right);
+    tnode->is_thread = 0;
+
+    return tnode;
 }
 
 
